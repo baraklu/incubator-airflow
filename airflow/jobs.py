@@ -1096,10 +1096,13 @@ class SchedulerJob(BaseJob):
                 open_slots = conf.getint('core', 'non_pooled_task_slot_count')
             elif pool in pools:
                 open_slots = pools[pool].open_slots(session=session)
-            else :
-                self.log.error("Ignoring {len(task_instances)} task instances with Pool(name={pool}) since the pool does not exist".format(
-                    **locals()
-                ))
+            else:
+                self.log.error(
+                    "Ignoring {len(task_instances)} task instances with "
+                    "Pool(name={pool}) since the pool does not exist".format(
+                        **locals()
+                    )
+                )
                 continue
 
             num_queued = len(task_instances)
