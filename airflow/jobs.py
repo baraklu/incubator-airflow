@@ -1094,8 +1094,13 @@ class SchedulerJob(BaseJob):
                 # If queued outside of a pool, trigger no more than
                 # non_pooled_task_slot_count per run
                 open_slots = conf.getint('core', 'non_pooled_task_slot_count')
-            else:
+            elif pool in pools:
                 open_slots = pools[pool].open_slots(session=session)
+            else :
+                self.log.error("Ignoring {len(task_instances)} task instances with Pool(name={pool}) since the pool does not exist".format(
+                    **locals()
+                ))
+                continue
 
             num_queued = len(task_instances)
             self.log.info(

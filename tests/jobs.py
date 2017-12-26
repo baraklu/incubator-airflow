@@ -1105,9 +1105,11 @@ class SchedulerJobTest(unittest.TestCase):
         dag_id = 'SchedulerJobTest.test_find_executable_task_instances_pool'
         task_id_1 = 'dummy'
         task_id_2 = 'dummydummy'
+        task_id_3 = 'shouldNotReturn'
         dag = DAG(dag_id=dag_id, start_date=DEFAULT_DATE, concurrency=16)
         task1 = DummyOperator(dag=dag, task_id=task_id_1, pool='a')
         task2 = DummyOperator(dag=dag, task_id=task_id_2, pool='b')
+        task3 = DummyOperator(dag=dag, task_id=task_id_3, pool='nonexisting')
         dagbag = self._make_simple_dag_bag([dag])
 
         scheduler = SchedulerJob(**self.default_scheduler_args)
@@ -1120,7 +1122,9 @@ class SchedulerJobTest(unittest.TestCase):
             TI(task1, dr1.execution_date),
             TI(task2, dr1.execution_date),
             TI(task1, dr2.execution_date),
-            TI(task2, dr2.execution_date)
+            TI(task2, dr2.execution_date),
+            TI(task3, dr1.execution_date),
+            TI(task3, dr2.execution_date)
             ])
         for ti in tis:
             ti.state = State.SCHEDULED
